@@ -2,16 +2,12 @@ EasyAdoSqlServer é um gerenciador de conexão para banco de dados SqlServer.
 Com ele não é mais preciso ficar gerenciado o estado da conexão, sendo somente necessário passar a query ou o nome da procedure que deseja executar, e caso o modelo que é passado pelo parâmetro do construtor for idêntico ao da tabela em questão da requisição, o mesmo possui um método de conversão automático para List<T> caso não for, poderá percorrer manualmente o DataTable de retorno e popular manualmente
 
 Segue exemplo a baixo:
-
-----------------------------------------------------------------------------------------------------------------------------------------
-
 using EasyAdo.Console.Modelos;
 using EasyAdo.SqlServer;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-
 namespace EasyAdo.Console.Repositorios
 {
     public class REventos : Context<Eventos>
@@ -196,7 +192,6 @@ namespace EasyAdo.Console.Repositorios
     }
 }
 
-----------------------------------------------------------------------------------------------------------------------------------------
 
 using EasyAdo.Console.Modelos;
 using EasyAdo.Console.Repositorios;
@@ -286,7 +281,6 @@ namespace EasyAdo.Console.Negocios
     }
 }
 
-----------------------------------------------------------------------------------------------------------------------------------------
 
 using EasyAdo.Console.Negocios;
 
@@ -305,4 +299,4 @@ namespace EasyAdo.Console
     }
 }
 
-----------------------------------------------------------------------------------------------------------------------------------------
+
