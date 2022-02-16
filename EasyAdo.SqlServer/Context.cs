@@ -11,21 +11,22 @@ namespace EasyAdo.SqlServer
 {
     public class Context<Model> : IDisposable
     {
-        private readonly string _connectionStringParametro;
-        private StringBuilder strBuilder;
-        private readonly SqlConnection connection;
+        protected string connectionString = "";
+        protected int timeOut = 180;
         /// <summary>
         /// Recebe os parametros da execução.
         /// </summary>
-        protected SqlCommand command;
+        private SqlCommand command;
         /// <summary>
         /// Contém o retorno dos dados da consulta.
         /// </summary>
         protected DataTable dataTable;
 
-        public Context(string connectionStringParametro, int timeOut = 180)
+        private StringBuilder strBuilder;
+        private readonly SqlConnection connection;
+
+        public Context()
         {
-            _connectionStringParametro = connectionStringParametro;
             dataTable = new DataTable();
             connection = new SqlConnection();
             command = new SqlCommand
@@ -33,6 +34,7 @@ namespace EasyAdo.SqlServer
                 Connection = connection,
                 CommandTimeout = timeOut == 0 ? 180 : timeOut
             };
+
             OpenConnection(false);
         }
 
@@ -50,10 +52,11 @@ namespace EasyAdo.SqlServer
         /// <param name="feedBack">Caso o retorno da execução seja igual a 0, será mostrado o motivo do mesmo nesse campo</param>
         /// <param name="transaction">Para força que a execução seja feita com Transaction</param>
         /// <returns></returns>
-        protected int Execute(string commandText, ExecuteType executeType, bool transaction = false)
+        protected int Execute(string commandText, List<SqlParameter> parameters, ExecuteType executeType, bool transaction = false)
         {
             try
             {
+                ConnectionStringExist();
                 OpenConnection();
                 int feedExecute = 0;
                 if (!String.IsNullOrEmpty(commandText))
@@ -61,6 +64,10 @@ namespace EasyAdo.SqlServer
                     if (connection != null)
                     {
                         command.CommandText = commandText;
+
+                        if (parameters != null && parameters.Count > 0)
+                            command.Parameters.AddRange(parameters.ToArray());
+
                         switch (executeType)
                         {
                             case ExecuteType.ReaderQuery:
@@ -98,27 +105,28 @@ namespace EasyAdo.SqlServer
             finally { CloseConnection(); }
         }
 
-        public virtual int Insert(Model entidade)
+        public virtual int Insert(Model model)
         {
             try
             {
+                ConnectionStringExist();
                 OpenConnection();
                 int idReturn = 0;
-                if (entidade != null)
+                if (model != null)
                 {
-                    var tipo = entidade.GetType();
+                    var tipo = model.GetType();
                     strBuilder = new StringBuilder();
                     strBuilder.Append("INSERT INTO ");
                     strBuilder.Append(tipo.Name + " (");
 
                     foreach (var prop in tipo.GetProperties())
                     {
-                        if (prop.GetValue(entidade) != null &&
-                            !String.IsNullOrEmpty(prop.GetValue(entidade).ToString()) &&
+                        if (prop.GetValue(model) != null &&
+                            !String.IsNullOrEmpty(prop.GetValue(model).ToString()) &&
                             prop.Name != "Id")
                         {
                             strBuilder.Append(prop.Name + ",");
-                            command.Parameters.AddWithValue("@" + prop.Name, prop.GetValue(entidade));
+                            command.Parameters.AddWithValue("@" + prop.Name, prop.GetValue(model));
                         }
                     }
                     strBuilder.Remove(strBuilder.Length - 1, 1);
@@ -162,6 +170,7 @@ namespace EasyAdo.SqlServer
         {
             try
             {
+                ConnectionStringExist();
                 OpenConnection();
                 int idReturn = 0;
                 if (model != null)
@@ -220,6 +229,7 @@ namespace EasyAdo.SqlServer
         {
             try
             {
+                ConnectionStringExist();
                 OpenConnection();
                 int idReturn = 0;
                 if (model != null)
@@ -252,6 +262,7 @@ namespace EasyAdo.SqlServer
         {
             try
             {
+                ConnectionStringExist();
                 OpenConnection();
                 var model = Activator.CreateInstance<Model>();
                 if (model != null)
@@ -395,7 +406,7 @@ namespace EasyAdo.SqlServer
                     dataTable.Clear();
                 }
 
-                connection.ConnectionString = _connectionStringParametro;
+                connection.ConnectionString = connectionString;
 
                 if (openConnection)
                     connection.Open();
@@ -421,6 +432,12 @@ namespace EasyAdo.SqlServer
             }
             catch(Exception ex)
             { throw new Exception("Context CloseConnection", ex); }
+        }
+
+        private void ConnectionStringExist()
+        {
+            if(string.IsNullOrEmpty(connectionString))
+                throw new Exception("Especifique uma ConnectionString");
         }
 
         public void Dispose()

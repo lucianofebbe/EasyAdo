@@ -7,6 +7,14 @@
     <PackageIcon>Icon.png</PackageIcon>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <AssemblyName>$(EasyAdoSqlServer)</AssemblyName>
+    <Authors>LucianoFebbeSantos</Authors>
+    <Company>$(LucianoFebbeSantos)</Company>
+    <FileVersion>1.0.0.1</FileVersion>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <PackageTags>Gerenciador de conexao; Ado; SqlServer; micro orm;</PackageTags>
+    <RepositoryUrl>https://github.com/lucianofebbe/EasyAdo</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>

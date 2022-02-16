@@ -11,9 +11,8 @@ namespace EasyAdo.SapAse
 {
     public class Context<Model> : IDisposable
     {
-        private readonly string _connectionStringParametro;
-        private StringBuilder strBuilder;
-        private readonly AseConnection connection;
+        protected string connectionString = "";
+        protected int timeOut = 180;
         /// <summary>
         /// Recebe os parametros da execução.
         /// </summary>
@@ -23,17 +22,23 @@ namespace EasyAdo.SapAse
         /// </summary>
         protected DataTable dataTable;
 
-        public Context(string connectionStringParametro, int timeOut = 180)
+        private StringBuilder strBuilder;
+        private AseConnection connection;
+        public Context()
         {
-            _connectionStringParametro = connectionStringParametro;
-            dataTable = new DataTable();
-            connection = new AseConnection();
-            command = new AseCommand
+            if (string.IsNullOrEmpty(connectionString))
+                throw new Exception("Especifique uma ConnectionString");
+            else
             {
-                Connection = connection,
-                CommandTimeout = timeOut == 0 ? 180 : timeOut
-            };
-            OpenConnection(false);
+                dataTable = new DataTable();
+                connection = new AseConnection();
+                command = new AseCommand
+                {
+                    Connection = connection,
+                    CommandTimeout = timeOut == 0 ? 180 : timeOut
+                };
+                OpenConnection(false);
+            }
         }
 
         /// <summary>
@@ -50,10 +55,11 @@ namespace EasyAdo.SapAse
         /// <param name="feedBack">Caso o retorno da execução seja igual a 0, será mostrado o motivo do mesmo nesse campo</param>
         /// <param name="transaction">Para força que a execução seja feita com Transaction</param>
         /// <returns></returns>
-        protected int Execute(string commandText, ExecuteType executeType, bool transaction = false)
+        protected int Execute(string commandText, List<AseParameter> parameters, ExecuteType executeType, bool transaction = false)
         {
             try
             {
+                ConnectionStringExist();
                 OpenConnection();
                 int feedExecute = 0;
                 if (!String.IsNullOrEmpty(commandText))
@@ -61,6 +67,10 @@ namespace EasyAdo.SapAse
                     if (connection != null)
                     {
                         command.CommandText = commandText;
+
+                        if (parameters != null && parameters.Count > 0)
+                            command.Parameters.AddRange(parameters.ToArray());
+
                         switch (executeType)
                         {
                             case ExecuteType.ReaderQuery:
@@ -102,6 +112,7 @@ namespace EasyAdo.SapAse
         {
             try
             {
+                ConnectionStringExist();
                 OpenConnection();
                 int idReturn = 0;
                 if (entidade != null)
@@ -162,6 +173,7 @@ namespace EasyAdo.SapAse
         {
             try
             {
+                ConnectionStringExist();
                 OpenConnection();
                 int idReturn = 0;
                 if (model != null)
@@ -220,6 +232,7 @@ namespace EasyAdo.SapAse
         {
             try
             {
+                ConnectionStringExist();
                 OpenConnection();
                 int idReturn = 0;
                 if (model != null)
@@ -252,6 +265,7 @@ namespace EasyAdo.SapAse
         {
             try
             {
+                ConnectionStringExist();
                 OpenConnection();
                 var model = Activator.CreateInstance<Model>();
                 if (model != null)
@@ -395,7 +409,7 @@ namespace EasyAdo.SapAse
                     dataTable.Clear();
                 }
 
-                connection.ConnectionString = _connectionStringParametro;
+                connection.ConnectionString = connectionString;
 
                 if (openConnection)
                     connection.Open();
@@ -421,6 +435,12 @@ namespace EasyAdo.SapAse
             }
             catch (Exception ex)
             { throw new Exception("Context CloseConnection", ex); }
+        }
+
+        private void ConnectionStringExist()
+        {
+            if (string.IsNullOrEmpty(connectionString))
+                throw new Exception("Especifique uma ConnectionString");
         }
 
         public void Dispose()
