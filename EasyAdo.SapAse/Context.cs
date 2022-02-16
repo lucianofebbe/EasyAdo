@@ -1,11 +1,11 @@
-﻿using Sybase.Data.AseClient;
+﻿using AdoNetCore.AseClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using static EasyAdo.SapAse.enumExecuteType;
+using static EasyAdo.SapAse.EnumExecuteType;
 
 namespace EasyAdo.SapAse
 {
@@ -13,7 +13,7 @@ namespace EasyAdo.SapAse
     {
         private readonly string _connectionStringParametro;
         private StringBuilder strBuilder;
-        private AseConnection connection;
+        private readonly AseConnection connection;
         /// <summary>
         /// Recebe os parametros da execução.
         /// </summary>
@@ -28,9 +28,11 @@ namespace EasyAdo.SapAse
             _connectionStringParametro = connectionStringParametro;
             dataTable = new DataTable();
             connection = new AseConnection();
-            command = new AseCommand();
-            command.Connection = connection;
-            command.CommandTimeout = timeOut == 0 ? 180 : timeOut;
+            command = new AseCommand
+            {
+                Connection = connection,
+                CommandTimeout = timeOut == 0 ? 180 : timeOut
+            };
             OpenConnection(false);
         }
 
@@ -286,7 +288,7 @@ namespace EasyAdo.SapAse
         {
             try
             {
-                List<T> data = new List<T>();
+                List<T> data = new();
                 foreach (DataRow row in dataTable.Rows)
                 {
                     T item = GetItem<T>(row);
@@ -298,7 +300,7 @@ namespace EasyAdo.SapAse
             { throw new Exception("Context ConverterDataTableToList", ex); }
         }
 
-        private T GetItem<T>(DataRow dataRow)
+        private static T GetItem<T>(DataRow dataRow)
         {
             try
             {
@@ -424,10 +426,11 @@ namespace EasyAdo.SapAse
         public void Dispose()
         {
             CloseConnection();
+            GC.SuppressFinalize(this);
         }
     }
 
-    public class enumExecuteType
+    public class EnumExecuteType
     {
         public enum ExecuteType
         {

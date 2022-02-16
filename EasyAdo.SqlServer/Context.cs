@@ -5,7 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using static EasyAdo.SqlServer.enumExecuteType;
+using static EasyAdo.SqlServer.EnumExecuteType;
 
 namespace EasyAdo.SqlServer
 {
@@ -13,7 +13,7 @@ namespace EasyAdo.SqlServer
     {
         private readonly string _connectionStringParametro;
         private StringBuilder strBuilder;
-        private SqlConnection connection;
+        private readonly SqlConnection connection;
         /// <summary>
         /// Recebe os parametros da execução.
         /// </summary>
@@ -28,9 +28,11 @@ namespace EasyAdo.SqlServer
             _connectionStringParametro = connectionStringParametro;
             dataTable = new DataTable();
             connection = new SqlConnection();
-            command = new SqlCommand();
-            command.Connection = connection;
-            command.CommandTimeout = timeOut == 0 ? 180 : timeOut;
+            command = new SqlCommand
+            {
+                Connection = connection,
+                CommandTimeout = timeOut == 0 ? 180 : timeOut
+            };
             OpenConnection(false);
         }
 
@@ -286,7 +288,7 @@ namespace EasyAdo.SqlServer
         {
             try
             {
-                List<T> data = new List<T>();
+                var data = new List<T>();
                 foreach (DataRow row in dataTable.Rows)
                 {
                     T item = GetItem<T>(row);
@@ -298,7 +300,7 @@ namespace EasyAdo.SqlServer
             { throw new Exception("Context ConverterDataTableToList", ex); }
         }
         
-        private T GetItem<T>(DataRow dataRow)
+        private static T GetItem<T>(DataRow dataRow)
         {
             try
             {
@@ -424,10 +426,11 @@ namespace EasyAdo.SqlServer
         public void Dispose()
         {
             CloseConnection();
+            GC.SuppressFinalize(this);
         }
     }
 
-    public class enumExecuteType
+    public class EnumExecuteType
     {
         public enum ExecuteType
         {

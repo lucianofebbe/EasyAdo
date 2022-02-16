@@ -2,10 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Sybase.AdoNet.AseClient.dll" Version="1.0.0" />
+    <PackageReference Include="AdoNetCore.AseClient" Version="0.19.2" />
   </ItemGroup>
 
 </Project>
