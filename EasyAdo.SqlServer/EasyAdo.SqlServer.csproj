@@ -15,10 +15,17 @@
     <PackageTags>Gerenciador de conexao; Ado; SqlServer; micro orm;</PackageTags>
     <RepositoryUrl>https://github.com/lucianofebbe/EasyAdo</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>OSL-3.0</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="..\Icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

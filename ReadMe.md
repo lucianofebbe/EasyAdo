@@ -1,6 +1,6 @@
 # EasyAdoSqlServer
 É um gerenciador de conexão para banco de dados SqlServer.
-Com ele não é mais preciso ficar gerenciado o estado da conexão, sendo somente necessário passar a query ou o nome da procedure que deseja executar, e caso o modelo que é passado pelo parâmetro do construtor for idêntico ao da tabela em questão da requisição, o mesmo possui um método de conversão automático para List<T> caso não for, poderá percorrer manualmente o DataTable de retorno e popular manualmente
+Com ele não é mais preciso ficar gerenciando o estado da conexão, sendo somente necessário passar a query ou o nome da procedure que deseja executar, e caso o modelo que é passado pelo parâmetro do construtor for idêntico ao da tabela em questão da requisição, o mesmo possui um método de conversão automático para List<T> caso não for, poderá percorrer manualmente o DataTable de retorno e popular manualmente
 
 Segue exemplo a baixo:
 
