@@ -4,7 +4,7 @@ Com ele não é mais preciso ficar gerenciado o estado da conexão, sendo soment
 
 Segue exemplo a baixo:
 
-- Repositorio
+- Modelo
 ```sh
 using System;
 namespace EasyAdo.Console.Modelos
