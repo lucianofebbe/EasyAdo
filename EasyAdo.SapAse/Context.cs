@@ -261,7 +261,7 @@ namespace EasyAdo.SapAse
             finally { CloseConnection(); }
         }
 
-        public virtual List<Model> FindAll()
+        public virtual List<Model> GetAll()
         {
             try
             {
